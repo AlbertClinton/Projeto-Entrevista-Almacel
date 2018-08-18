@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<header>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+        crossorigin="anonymous">
+    </script>
+</header>
+
+<body style="padding-top: 6rem !important;" class="bg-light">
+
+    <nav class="navbar fixed-top navbar-light bg-dark">
+        <div class="container">
+                <span class="navbar-brand"> <a class="navbar-brand text-white" href="/"><h1>Incidentes</h1></a></span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="my-3 p-3 bg-white rounded box-shadow">
+            <h3 class="mt-2">Abrir novo incidente</h3>
+            <hr>
+            <form action="/" method="POST">
+                <input type="hidden" name="id" value=<%=  incidente.id%>>
+
+                <div class="form-group row">
+                    <label for="Numero" class="col-sm-2 col-form-label-lg">Número</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="id" value="# <%=  incidente.id%>"  readonly>
+                    </div>
+                </div>
+                
+                <% if (creation_date_string) { %>
+                    <div class="form-group row">
+                        <label for="Criação" class="col-sm-2 col-form-label-lg">Criação</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" value="<%= creation_date_string%>"  readonly>
+                        </div>
+                    </div>
+                <% } %>
+
+                <div class="form-group row">
+                    <label for="status" class="col-sm-2 col-form-label-lg">Status</label>
+                    <div class="col-sm-10">
+                        <select name="status" class="form-control">
+                            <option <% if (incidente.status == 'Aberto') { %> selected <% } %> >Aberto</option>
+                            <option <% if (incidente.status == 'Em andamento') { %> selected <% } %> >Em andamento</option>
+                            <option <% if (incidente.status == 'Fechado') { %> selected <% } %> >Fechado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="descricao" class="col-sm-2 col-form-label-lg">Descrição</label>
+                    <div class="col-sm-10">
+                        <textarea name="descricao" class="form-control" rows="3" placeholder="Descreva o incidente"><%=incidente.descricao%></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="atendente" class="col-sm-2 col-form-label-lg">Atendente</label>
+                    <div class="col-sm-10">
+                        <select name="atendente" class="form-control" id="status">
+                            <% if (atendentes) { %>
+                                <% atendentes.forEach( function(elemento){ %>
+                                    <% if (incidente.atendente) { %>
+                                        <% if (elemento.id == incidente.atendente.id) { %>
+                                            <option value="<%= elemento.id %>" selected><%= elemento.nome %></option>
+                                        <% } else { %>
+                                            <option value="<%= elemento.id %>"><%= elemento.nome %></option>
+                                        <% } %>
+                                    <% } else { %>
+                                        <option value="<%= elemento.id %>"><%= elemento.nome %></option>
+                                    <% } %>
+                                <% }) %>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group row">
+                        <label for="cliente" class="col-sm-2 col-form-label-lg">Cliente</label>
+                        <div class="col-sm-10">
+                            <select name="cliente" class="form-control" id="status">
+                                <% if (clientes) { %>
+                                    <% clientes.forEach( function(elemento){ %>
+                                        <% if (incidente.cliente) { %>
+                                            <% if (elemento.id == incidente.cliente.id) { %>
+                                                <option value="<%= elemento.id %>" selected><%= elemento.nome %></option>
+                                            <% } else { %>
+                                                <option value="<%= elemento.id %>"><%= elemento.nome %></option>
+                                            <% } %>
+                                        <% } else { %>
+                                            <option value="<%= elemento.id %>"><%= elemento.nome %></option>
+                                        <% } %>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+
+                <div class="row justify-content-between mt-5 px-3">
+                        <div class="col-sm-3 mb-3">
+                            <button class="btn btn-block" name="method" value="DELETE">Deletar</button>
+                        </div>
+
+                        <div class="col-sm-3  mb-3">
+                            <button class="btn btn-block" name="method" value="PUT">Atualizar</button>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <button class="btn btn-primary btn-block inserirIncidenteButton" name="method" value="POST">Submeter</button>
+                        </div>
+                </div>
+            </form>
+        </div>
+        <% if (incidentes) { %>
+        <div class="my-3 mt-4 p-3 bg-white rounded box-shadow">
+            <h3 class="mb-4 mt-2">Lista de Incidentes</h3>
+            <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Atendente</th>
+                    <th scope="col">Empresa</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% incidentes.forEach( function(elemento){ %>
+                    <tr>
+                        <td>
+                            <%= elemento.id %>
+                        </td>
+                        <td>
+                            <%= elemento.status %>
+                        </td>
+                        <td>
+                            <%= elemento.atendente.nome %>
+                        </td>
+                        <td>
+                            <%= elemento.cliente.empresa %>
+                        </td>
+                        <td>
+                            <%= elemento.cliente.nome %>
+                        </td>
+                        <td>
+                            <form action="/<%= elemento.id %>">
+                                <button class="btn btn-link">Editar</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </div>
+        <% } %>
+    </div>
+
+</body>
+</html>
